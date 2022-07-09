@@ -1,53 +1,49 @@
-const request = require('request')
-const cheerio = require('cheerio')
-const { first } = require('cheerio/lib/api/traversing')
+const request= require('request')
 
+const cheerio = require('cheerio')
 
 
 console.log('Before')
 
-request('https://www.worldometers.info/coronavirus/', cb) 
+request('https://www.worldometers.info/coronavirus/', cb);
 
-function cb(error, response, html) {
-    
-    if(error){
-        console.log(error)
 
-    }
-    else{
-       // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        handleHTML(html)
+function cb (error, response, html) {
+       if(error){
+              console.log(error)
+       }
+       else{
+              // console.log(response && response.statusCode)
+              handleHTML(html)
+       }
+     }
 
-    }
-  
-}
 
 function handleHTML(html){
+       // in selTool we are basically getting the whole HTML in cheerio's format
+       let selTool = cheerio.load(html)
+       console.log(selTool)
+   
 
-    let selTool = cheerio.load(html)
+       let contentArr = selTool('.maincounter-number span')
 
-    //console.log(selTool);
 
-    let contentArr = selTool('.maincounter-number span')
-    // console.log(contentArr)
+       // for(let i=0 ; i<contentArr.length ; i++){
+       //        let data = selTool(contentArr[i]).text()
+       //        console.log(data)
+       // }
 
-    // for(let i=0; i<contentArr.length; i++){
+       let totalCases = selTool(contentArr[0]).text()
+       let totalDeaths = selTool(contentArr[1]).text()
+       let totalRecovered = selTool(contentArr[2]).text()
 
-    //     let data = selTool(contentArr[i]).text()
-    //     console.log(data)
-    // }
-    
-    let cases = selTool(contentArr[0]).text()
-    let deaths = selTool(contentArr[1]).text()
-    let recovered = selTool(contentArr[2]).text()
 
-    console.log("Cases -> " + cases)
-    console.log("Deaths -> " + deaths)
-    console.log("Recovered -> " + recovered)
+       console.log('Total Cases->  ' + totalCases)
+       console.log('Total Deaths->  ' + totalDeaths)
+       console.log('Total Recovered->  ' + totalRecovered)
+
+
 
 }
-
-
-
 
 console.log('After')
